@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>逃离塔科夫工具站</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <!-- 自定义CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<!-- 顶部导航栏 - 修改为浮动样式 -->
+	<div class="top-navbar">
+		<div class="nav-container">
+			<div class="nav-item active" data-target="map">
+				<div class="nav-icon">
+					<svg viewBox="0 0 24 24">
+						<path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/>
+					</svg>
+				</div>
+				<div class="nav-name">地图</div>
+			</div>
+			<div class="nav-item" data-target="tasks">
+				<div class="nav-icon">
+					<svg viewBox="0 0 24 24">
+						<path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+					</svg>
+				</div>
+				<div class="nav-name">任务</div>
+			</div>
+			<div class="nav-item" data-target="items">
+				<div class="nav-icon">
+					<svg viewBox="0 0 24 24">
+						<path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+					</svg>
+				</div>
+				<div class="nav-name">物品</div>
+			</div>
+		</div>
+	</div>
+
+    <!-- 地图界面 -->
+    <div class="content active" id="map-content">
+        <div class="content-header">
+            <h2>地图导航</h2>
+            <div class="map-style-control">
+                <button class="map-style-btn active" data-style="2D">2D</button>
+                <button class="map-style-btn" data-style="3D">3D</button>
+                <button class="map-style-btn" data-style="卫星">卫星</button>
+            </div>
+        </div>
+        <div class="main-view">
+			<!-- 添加浮动控制栏 -->
+			<div class="floating-controls">
+				<div class="map-controls">
+					<div class="map-style-control">
+						<button class="map-style-btn active" data-style="2D">2D</button>
+						<button class="map-style-btn" data-style="3D">3D</button>
+						<button class="map-style-btn" data-style="卫星">卫星</button>
+					</div>
+				</div>
+			</div>
+            <div id="map"></div>
+        </div>
+        <!-- 底部地图选择栏 -->
+        <div class="bottom-dock">
+            <div class="dock-container">
+                <div class="dock-item active" data-map="海关">
+                    <div class="dock-icon">
+                        <img src="img/map/海关_thumb.jpg" alt="海关">
+                    </div>
+                    <div class="dock-name">海关</div>
+                </div>
+                <div class="dock-item" data-map="海岸线">
+                    <div class="dock-icon">
+                        <img src="img/map/海岸线_thumb.jpg" alt="海岸线">
+                    </div>
+                    <div class="dock-name">海岸线</div>
+                </div>
+                <div class="dock-item" data-map="森林">
+                    <div class="dock-icon">
+                        <img src="img/map/森林_thumb.jpg" alt="森林">
+                    </div>
+                    <div class="dock-name">森林</div>
+                </div>
+                <div class="dock-item" data-map="工厂">
+                    <div class="dock-icon">
+                        <img src="img/map/工厂_thumb.jpg" alt="工厂">
+                    </div>
+                    <div class="dock-name">工厂</div>
+                </div>
+                <div class="dock-item" data-map="立交桥">
+                    <div class="dock-icon">
+                        <img src="img/map/立交桥_thumb.jpg" alt="立交桥">
+                    </div>
+                    <div class="dock-name">立交桥</div>
+                </div>
+                <div class="dock-item" data-map="储备站">
+                    <div class="dock-icon">
+                        <img src="img/map/储备站_thumb.jpg" alt="储备站">
+                    </div>
+                    <div class="dock-name">储备站</div>
+                </div>
+                <div class="dock-item" data-map="实验室">
+                    <div class="dock-icon">
+                        <img src="img/map/实验室_thumb.jpg" alt="实验室">
+                    </div>
+                    <div class="dock-name">实验室</div>
+                </div>
+                <div class="dock-item" data-map="灯塔">
+                    <div class="dock-icon">
+                        <img src="img/map/灯塔_thumb.jpg" alt="灯塔">
+                    </div>
+                    <div class="dock-name">灯塔</div>
+                </div>
+                <div class="dock-item" data-map="街区">
+                    <div class="dock-icon">
+                        <img src="img/map/街区_thumb.jpg" alt="街区">
+                    </div>
+                    <div class="dock-name">街区</div>
+                </div>
+                <div class="dock-item" data-map="中心区">
+                    <div class="dock-icon">
+                        <img src="img/map/中心区_thumb.jpg" alt="中心区">
+                    </div>
+                    <div class="dock-name">中心区</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 任务界面 -->
+    <div class="content" id="tasks-content">
+        <div class="main-view">
+			 <!-- 添加浮动控制栏 -->
+			<div class="floating-controls">
+				<div class="task-controls">
+					<div class="progress-controls">
+						<div class="progress-info">
+							<span id="progress-text">任务进度: 0/0</span>
+						</div>
+						<button id="clear-progress" class="progress-btn">清除所有进度</button>
+					</div>
+				</div>
+			</div>
+            <svg id="task-graph"></svg>
+        </div>
+        <!-- 底部商人选择栏 -->
+        <div class="bottom-dock">
+            <div class="dock-container">
+                <div class="dock-item active" data-trader="prapor">
+                    <div class="dock-icon">
+                        <img src="img/NPC/Prapor.jpg" alt="普拉波">
+                    </div>
+                    <div class="dock-name">Prapor</div>
+                </div>
+                <div class="dock-item" data-trader="therapist">
+                    <div class="dock-icon">
+                        <img src="img/NPC/Therapist.jpg" alt="医生">
+                    </div>
+                    <div class="dock-name">Therapist</div>
+                </div>
+                <div class="dock-item" data-trader="Fence">
+                    <div class="dock-icon">
+                        <img src="img/NPC/Fence.jpg" alt="黑商">
+                    </div>
+                    <div class="dock-name">Fence</div>
+                </div>
+                <div class="dock-item" data-trader="skier">
+                    <div class="dock-icon">
+                        <img src="img/NPC/Skier.jpg" alt="滑雪者">
+                    </div>
+                    <div class="dock-name">Skier</div>
+                </div>
+                <div class="dock-item" data-trader="peacekeeper">
+                    <div class="dock-icon">
+                        <img src="img/NPC/Peacekeeper.jpg" alt="维和人员">
+                    </div>
+                    <div class="dock-name">Peacekeeper</div>
+                </div>
+                <div class="dock-item" data-trader="mechanic">
+                    <div class="dock-icon">
+                        <img src="img/NPC/Mechanic.jpg" alt="机械师">
+                    </div>
+                    <div class="dock-name">Mechanic</div>
+                </div>
+                <div class="dock-item" data-trader="ragman">
+                    <div class="dock-icon">
+                        <img src="img/NPC/Ragman.jpg" alt="布商">
+                    </div>
+                    <div class="dock-name">Ragman</div>
+                </div>
+                <div class="dock-item" data-trader="jaeger">
+                    <div class="dock-icon">
+                        <img src="img/NPC/Jaeger.jpg" alt="猎人">
+                    </div>
+                    <div class="dock-name">Jaeger</div>
+                </div>
+                <div class="dock-item" data-trader="Lightkeeper">
+                    <div class="dock-icon">
+                        <img src="img/NPC/Lightkeeper.jpg" alt="Lightkeeper">
+                    </div>
+                    <div class="dock-name">Lightkeeper</div>
+                </div>
+                <div class="dock-item" data-trader="Ref">
+                    <div class="dock-icon">
+                        <img src="img/NPC/Ref.jpg" alt="裁判">
+                    </div>
+                    <div class="dock-name">竞技场裁判</div>
+                </div>
+                <div class="dock-item" data-trader="BTR">
+                    <div class="dock-icon">
+                        <img src="img/NPC/BTR.jpg" alt="BTR司机">
+                    </div>
+                    <div class="dock-name">BTR司机</div>
+                </div>
+            </div>
+        </div>
+        <div class="trader-tooltip" id="trader-tooltip"></div>
+        <div class="task-tooltip" id="task-tooltip"></div>
+    </div>
+
+    <!-- 物品界面 -->
+    <div class="content" id="items-content">
+        <div class="content-header">
+            <h2>物品管理</h2>
+        </div>
+        <div class="main-view">
+            <div class="items-container">
+                <div class="coming-soon">物品功能开发中...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- D3.js -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <!-- jQuery (Panzoom依赖) -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <!-- Panzoom -->
+    <script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+    <!-- 任务数据 -->
+    <script src="tasks_data.js"></script>
+    <!-- 自定义JS -->
+    <script src="script.js"></script>
+</body>
+</html>
