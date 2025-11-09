@@ -305,7 +305,7 @@ body {
     padding: 15px;
     flex: 1;
     overflow-y: auto;
-    max-height: calc(80vh - 150px);
+    /*max-height: calc(80vh - 150px);*/
 }
 
 /* 隐藏内容区域的滚动条 */
@@ -645,5 +645,6 @@ body {
 .bottom-dock {
     bottom: 10px;
 }
+
 
 
