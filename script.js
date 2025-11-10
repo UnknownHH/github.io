@@ -123,7 +123,6 @@ function initMap(mapName, style) {
         const imgWidth = this.width;
         const imgHeight = this.height;
         
-        console.log(`地图 ${mapName} 尺寸: ${imgWidth}x${imgHeight}`);
         
         // 使用图片实际尺寸设置边界
         const bounds = [[0, 0], [imgHeight, imgWidth]];
@@ -285,8 +284,6 @@ function renderTaskGraph(traderName) {
         return;
     }
     
-    console.log(`渲染 ${traderName} 的任务图，尺寸: ${width}x${height}`);
-    
     // 创建SVG
     const svg = d3.select('#task-graph')
         .attr('width', width)
@@ -339,13 +336,9 @@ function renderTaskGraph(traderName) {
     tasks.nodes.forEach((node, i) => {
         const gridPos = node.gridPosition || { x: 0, y: 0 };
         
-        console.log(`节点 ${node.name} 的 gridPosition:`, gridPos);
-        
         // 使用gridPosition的x和y坐标，乘以间距得到实际位置
         node.x = margin.left + gridPos.x * gridHorizontalSpacing;
         node.y = margin.top + gridPos.y * gridVerticalSpacing;
-        
-        console.log(`节点 ${node.name} 的实际位置: (${node.x}, ${node.y})`);
     });
     
     // 创建连线 - 使用水平和垂直线（网格式）
@@ -376,12 +369,12 @@ function renderTaskGraph(traderName) {
                 case 'default':
                     return '#666';    // 灰色用于默认连线
                 default:
-                    return '#4CAF50'; // 绿色用于主连线
+                    return '#666'; // 白色用于主连线
             }
         })
         .attr('stroke-width', 10) // 统一设置为4像素粗细
         .attr('stroke-dasharray', d => d.type === 'branch' ? '5,5' : 'none')
-        .attr('stroke-opacity', 0.8);
+        .attr('stroke-opacity', 1);
     
     // 创建节点组
     const node = g.append('g')
@@ -420,7 +413,7 @@ function renderTaskGraph(traderName) {
         .attr('text-anchor', 'start')
         .attr('x', -nodeWidth/2 + 15)
         .attr('y', -nodeHeight/2 + 23)
-        .attr('fill', '#fff')
+        .attr('fill', '#ccc')
         .style('font-size', '9px')
         .style('font-weight', 'bold')
         .style('pointer-events', 'none');
@@ -431,7 +424,7 @@ function renderTaskGraph(traderName) {
         .attr('text-anchor', 'end')
         .attr('x', nodeWidth/2 - 15)
         .attr('y', -nodeHeight/2 + 23)
-        .attr('fill', '#4CAF50')
+        .attr('fill', '#ffca00')
         .style('font-size', '9px')
         .style('font-weight', 'bold')
         .style('pointer-events', 'none');
@@ -487,7 +480,45 @@ function renderTaskGraph(traderName) {
                 .style('pointer-events', 'none');
         }
     });
-
+	
+	// 添加任务类型标签
+	node.each(function(d) {
+		const nodeElement = d3.select(this);
+		
+		if (d.types && d.types.length > 0) {
+			d.types.forEach((type, index) => {
+				const labelText = type === 'fairy' ? '仙女棒' : '3 x 4';
+				const labelWidth = type === 'fairy' ? 28 : 28; // 根据文本长度调整宽度
+				const labelHeight = 12;
+				
+				// 计算标签位置（从右向左排列）
+				const xPosition = nodeWidth/2 - 25 - (index * (labelWidth + 5));
+				const yPosition = nodeHeight/2 - 15;
+				
+				// 添加标签背景矩形
+				nodeElement.append('rect')
+					.attr('class', `task-type-label ${type}`)
+					.attr('x', xPosition - labelWidth/2)
+					.attr('y', yPosition - labelHeight/2)
+					.attr('width', labelWidth)
+					.attr('height', labelHeight)
+					.attr('rx', 2)
+					.attr('ry', 2);
+				
+				// 添加标签文本
+				nodeElement.append('text')
+					.text(labelText)
+					.attr('text-anchor', 'middle')
+					.attr('x', xPosition)
+					.attr('y', yPosition + 3) // 微调垂直位置
+					.style('font-size', '8px')
+					.style('font-weight', 'bold')
+					.style('fill', '#fff')
+					.style('pointer-events', 'none');
+			});
+		}
+	});
+	
     // 添加文本截断函数（辅助函数）
     function truncateText(text, maxWidth, fontSize) {
         // 最大字符数（包括圆点和省略号）
@@ -497,7 +528,49 @@ function renderTaskGraph(traderName) {
         }
         return text;
     }
-    
+    // 添加鼠标悬停事件 - 显示任务目标提示框
+	node.on('mouseover', function(event, d) {
+		event.stopPropagation();
+		
+		// 获取任务目标数组
+		const objectives = Array.isArray(d.objective) ? d.objective : [d.objective];
+		
+		// 创建提示框内容
+		let tooltipContent = '';
+		objectives.forEach((objective, index) => {
+			tooltipContent += `<div class="objective-tooltip-item">${index + 1}. ${objective}</div>`;
+		});
+		
+		// 创建或更新提示框
+		let tooltip = d3.select('#objective-tooltip');
+		if (tooltip.empty()) {
+			tooltip = d3.select('body').append('div')
+				.attr('id', 'objective-tooltip')
+				.attr('class', 'objective-tooltip');
+		}
+		
+		tooltip.html(`
+			<div class="objective-tooltip-header">${d.name} - 任务目标</div>
+			<div class="objective-tooltip-content">${tooltipContent}</div>
+		`)
+		.style('display', 'block')
+		.style('left', (event.pageX + 15) + 'px')
+		.style('top', (event.pageY - 15) + 'px');
+	});
+
+	// 添加鼠标移动事件 - 更新提示框位置
+	node.on('mousemove', function(event) {
+		d3.select('#objective-tooltip')
+			.style('left', (event.pageX + 15) + 'px')
+			.style('top', (event.pageY - 15) + 'px');
+	});
+
+	// 添加鼠标离开事件 - 隐藏提示框
+	node.on('mouseout', function(event) {
+		event.stopPropagation();
+		d3.select('#objective-tooltip').style('display', 'none');
+	});
+	
     // 节点点击事件 - 显示任务详情提示框并选中节点
     node.on('click', function(event, d) {
         event.stopPropagation(); // 防止事件冒泡影响缩放
@@ -568,6 +641,7 @@ function renderTaskGraph(traderName) {
         console.log(`创建初始缩放状态给商人: ${traderName}`);
     }
 }
+
 
 // 显示任务详情提示框
 function showTaskTooltip(d, traderName) {
@@ -643,6 +717,9 @@ function showTaskTooltip(d, traderName) {
             
             // 切换任务完成状态
             toggleTaskStatus(taskId, trader, d);
+			
+			
+            taskTooltip.style.display = 'none';
             
             // 更新提示框中的状态显示
             const newCompletedStatus = !d.completed;
@@ -750,10 +827,10 @@ function generateTasks(traderName) {
             detailImage: task.detailImage || task.image || "img/tasks/default.jpg",
             completed: isCompleted,
             nextTasks: task.next || [],
-            gridPosition: gridPos  // 确保gridPosition被传递
+            gridPosition: gridPos,  // 确保gridPosition被传递
+			types: task.types || []  // 确保包含types字段
         });
         
-        console.log(`创建节点 ${task.name || "未知任务"}，gridPosition:`, gridPos);
     });
     
     // 创建连线 - 基于每个任务的next数组创建多分支连接
