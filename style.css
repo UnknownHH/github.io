@@ -1,3 +1,4 @@
+/* ===== CSS 变量定义 ===== */
 :root {
     --bg-color: #000000;
     --content-bg: #232323;
@@ -5,8 +6,11 @@
     --accent-color: #4CAF50;
     --hover-color: #333;
     --dock-bg: rgba(35, 35, 35, 0.9);
+    --shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    --border-radius: 5px;
 }
 
+/* ===== 重置和基础样式 ===== */
 * {
     margin: 0;
     padding: 0;
@@ -14,11 +18,10 @@
     font-family: 'Arial', sans-serif;
 }
 
-/* 全局布局 */
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    padding-top: 0px;
+    padding-top: 0;
     padding-bottom: 120px;
     overflow: hidden;
     position: fixed;
@@ -26,70 +29,119 @@ body {
     height: 100%;
 }
 
-/* 顶部导航栏样式 - 移动端优化 */
-.top-navbar {
+/* ===== 通用组件样式 ===== */
+
+/* 导航栏和Dock栏通用样式 */
+.top-navbar,
+.bottom-dock {
     position: fixed;
-    top: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background-color: var(--dock-bg);
+    /*background-color: var(--dock-bg);*/
     backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 10px 20px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow);
     z-index: 1000;
-    max-width: 90%;
+    max-width: 95%;
     overflow-x: auto;
 }
 
-/* 移动端导航栏靠左对齐 */
+.top-navbar {
+    top: 20px;
+}
 
+.bottom-dock {
+    bottom: 10px;
+}
+
+/* 移动端适配 */
 @media (max-width: 768px) {
-    .top-navbar {
+    .top-navbar,
+    .bottom-dock {
         left: 10px;
         transform: none;
         right: 10px;
         max-width: calc(100% - 20px);
+        padding: 8px 15px;
+        border-radius: 5px;
     }
 }
-.nav-container {
+
+/* 容器和项目通用样式 */
+.nav-container,
+.dock-container {
     display: flex;
     gap: 15px;
     align-items: center;
 }
 
-.nav-item {
+.nav-item,
+.dock-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     cursor: pointer;
     transition: all 0.3s;
     min-width: 80px;
     position: relative;
 }
 
-.nav-item:hover {
+.nav-item:hover,
+.dock-item:hover {
     background-color: rgba(255, 255, 255, 0.1);
     transform: translateY(-2px);
 }
 
-.nav-item.active {
+.nav-item.active,
+.dock-item.active {
     background-color: rgba(76, 175, 80, 0.2);
+}
+
+/* 移动端项目尺寸调整 */
+@media (max-width: 768px) {
+    .nav-item,
+    .dock-item {
+        min-width: 70px;
+        padding: 8px;
+    }
+}
+
+/* 图标样式 */
+.nav-icon,
+.dock-icon {
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 5px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
 }
 
 .nav-icon {
     width: 40px;
     height: 40px;
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 5px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+    background-color: var(--content-bg);
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--content-bg);
+}
+
+.dock-icon {
+    width: 60px;
+    height: 60px;
+}
+
+/* 移动端图标尺寸调整 */
+@media (max-width: 768px) {
+    .nav-icon {
+        width: 35px;
+        height: 35px;
+    }
+    .dock-icon {
+        width: 40px;
+        height: 40px;
+    }
 }
 
 .nav-icon svg {
@@ -102,13 +154,28 @@ body {
     fill: var(--accent-color);
 }
 
-.nav-name {
+.dock-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 名称标签 */
+.nav-name,
+.dock-name {
     font-size: 12px;
     font-weight: bold;
     text-align: center;
 }
 
-/* 内容区域样式 */
+@media (max-width: 768px) {
+    .nav-name,
+    .dock-name {
+        font-size: 11px;
+    }
+}
+
+/* ===== 内容区域样式 ===== */
 .content {
     display: none;
     padding: 10px;
@@ -121,16 +188,72 @@ body {
     display: block;
 }
 
-/* 内容头部样式 */
-.content-header {
-    display: none; /* 隐藏内容头部，使用浮动控制栏替代 */
+/* 主视图区域 */
+.main-view {
+    height: calc(100vh - 20px);
+    background-color: var(--content-bg);
+    border-radius: var(--border-radius);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 20px;
 }
 
-/* 浮动控制栏样式 */
+/* ===== 地图界面样式 ===== */
+#map {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+    /* 添加背景图片 */
+    background-image: url('img/bg-eod.1BFlYUrN.webp'); /* 替换为你的地图背景图片路径 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* ===== 任务界面样式 ===== */
+#task-graph {
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-color);
+    /* 添加背景图片 */
+    background-image: url('img/bg-eod.1BFlYUrN.webp'); /* 替换为你的任务背景图片路径 */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: block;
+}
+
+/* 任务节点样式 */
+.task-node {
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.task-node.completed rect {
+    /*fill: #2a5c2a !important;*/
+    stroke: #4CAF50 !important; /* 节点完成状态边框颜色 */
+    /*stroke-width: 3px !important;*/
+}
+
+.task-node:hover rect {
+    /*stroke-width: 4px !important;*/
+    filter: drop-shadow(0 0 8px rgba(222, 233, 233, 0.6)); /* 节点鼠标停留阴影效果 */
+}
+
+.task-node.completed:hover rect {
+    filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.8)); /* 节点任务完成状态阴影效果*/
+}
+
+.task-node.selected rect {
+    stroke: #dee9e9 !important;
+    /*stroke-width: 4px !important;*/
+    filter: drop-shadow(0 0 8px rgba(222, 233, 233, 0.6)); /* 节点选中状态阴影效果 */
+}
+
+/* ===== 浮动控制栏样式 ===== */
 .floating-controls {
     position: absolute;
     top: 15px;
-    left: auto;
     right: 15px;
     z-index: 1000;
     display: flex;
@@ -143,12 +266,19 @@ body {
     pointer-events: auto;
 }
 
-/* 统一控制栏样式 */
+@media (max-width: 768px) {
+    .floating-controls {
+        top: 110px;
+        right: 0;
+    }
+}
+
+/* 控制栏通用样式 */
 .map-controls,
 .task-controls {
-    background-color: var(--dock-bg);
+    /*background-color: var(--dock-bg);*/
     backdrop-filter: blur(10px);
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     padding: 10px 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     display: flex;
@@ -156,23 +286,7 @@ body {
     align-items: center;
 }
 
-/* 主视图区域样式 */
-.main-view {
-    height: calc(100vh - 20px);
-    background-color: var(--content-bg);
-    border-radius: 5px;
-    position: relative;
-    overflow: hidden;
-    margin-bottom: 20px;
-}
-
-/* 地图样式 */
-#map {
-    width: 100%;
-    height: 100%;
-    background-color: var(--bg-color);
-}
-
+/* 地图样式控制 */
 .map-style-control {
     display: flex;
     gap: 10px;
@@ -193,69 +307,74 @@ body {
     color: #fff;
 }
 
-/* 任务图样式 */
-#task-graph {
-    width: 100%;
-    height: 100%;
-    background-color: var(--bg-color);
-    display: block;
+/* 进度控制 */
+.progress-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
 }
 
-.task-node {
+.progress-info {
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.progress-btn {
+    padding: 8px 15px;
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
-    transition: all 0.3s;
+    font-size: 12px;
+    transition: background-color 0.3s;
 }
 
-.task-node.completed rect {
-    fill: #2a5c2a !important;
-    stroke: #4CAF50 !important;
-    stroke-width: 3px !important;
+.progress-btn:hover {
+    background-color: #b71c1c;
 }
 
-.task-node:hover rect {
-    stroke-width: 4px !important;
-    filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.6));
-}
-
-.task-node.completed:hover rect {
-    filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.8));
-}
-
-/* 任务节点选中状态 */
-.task-node.selected rect {
-    stroke: #2196F3 !important;
-    stroke-width: 4px !important;
-    filter: drop-shadow(0 0 8px rgba(33, 150, 243, 0.6));
-}
-
-/* 任务提示框样式 - 固定在左侧 */
+/* ===== 任务提示框样式 ===== */
 .task-tooltip {
     position: fixed;
     left: 20px;
     top: 150px;
-	bottom: 150px;
-    background-color: var(--content-bg);
+    bottom: 135px;
+    background-color: var(--dock-bg);
+	backdrop-filter: blur(10px);
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
     z-index: 1000;
-	width:400px;
+    width: 400px;
     display: none;
     line-height: 1.4;
     overflow: hidden;
     flex-direction: column;
-}
-
-.task-tooltip {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
 
-/* 任务提示框头部 - 固定位置 */
+.task-tooltip::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+@media (max-width: 768px) {
+    .task-tooltip {
+        left: 10px;
+        right: 10px;
+        max-width: none;
+        top: 120px;
+        transform: none;
+        width: auto;
+    }
+}
+
+/* 任务提示框头部 */
 .task-tooltip-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 15px 10px 15px;
+    padding: 15px 15px 10px;
     border-bottom: 1px solid #444;
     background-color: rgba(0, 0, 0, 0.3);
     position: sticky;
@@ -294,25 +413,20 @@ body {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* 任务提示框内容区域 - 可滚动 */
+/* 任务提示框内容 */
 .task-tooltip-info {
     padding: 15px;
     flex: 1;
     overflow-y: auto;
     max-height: calc(80vh - 150px);
-}
-
-/* 隐藏内容区域的滚动条 */
-.task-tooltip-info::-webkit-scrollbar {
-    display: none;
-}
-
-.task-tooltip-info {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
 
-/* 任务图片 */
+.task-tooltip-info::-webkit-scrollbar {
+    display: none;
+}
+
 .task-image {
     width: 100%;
     object-fit: cover;
@@ -321,15 +435,14 @@ body {
     margin-bottom: 10px;
 }
 
-/* 任务信息行 */
 .task-info-row {
     display: flex;
     justify-content: space-between;
-    margin: 10px 0 15px 0;
-    font-size: 13px;
+    margin: 10px 0 15px;
+    font-size: 16px;
 }
 
-/* 任务目标和奖励区域 */
+/* 任务内容区块 */
 .task-objectives,
 .task-rewards,
 .task-guide {
@@ -347,12 +460,12 @@ body {
 .task-reward,
 .task-guide {
     margin-bottom: 5px;
-    font-size: 12px;
+    font-size: 16px;
     line-height: 1.3;
     padding-left: 5px;
 }
 
-/* 任务操作区域 - 固定在底部 */
+/* 任务操作区域 */
 .task-actions {
     padding: 15px;
     border-top: 1px solid #444;
@@ -364,7 +477,7 @@ body {
     text-align: center;
 }
 
-/* 状态切换按钮样式 */
+/* 状态切换按钮 */
 .status-toggle-btn {
     padding: 10px 20px;
     border: none;
@@ -392,57 +505,46 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* 任务状态文本样式 */
-.status-text.completed {
-    color: #4CAF50;
-    font-weight: bold;
-}
-
-.status-text.incomplete {
-    color: #999;
-    font-weight: bold;
-}
-
-/* 确保提示框在移动设备上也能正常显示 */
-@media (max-width: 768px) {
-    .task-tooltip {
-        left: 10px;
-        right: 10px;
-        max-width: none;
-        top: 120px;
-        transform: none;
-		width:auto;
-    }
-}
-
-/* 进度管理样式 */
-.progress-controls {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.progress-info {
-    font-size: 14px;
+/* ===== 任务目标提示框样式 ===== */
+.objective-tooltip {
+    position: fixed;
+    background-color: var(--dock-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+    z-index: 1001;
+    max-width: 350px;
+    display: none;
+    padding: 12px;
+    font-size: 16px;
+    line-height: 1.4;
     color: var(--text-color);
+    border: 1px solid #444;
+    pointer-events: none;
 }
 
-.progress-btn {
-    padding: 8px 15px;
-    background-color: #d32f2f;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: background-color 0.3s;
+.objective-tooltip-header {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #eee;
+    border-bottom: 1px solid #555;
+    padding-bottom: 4px;
 }
 
-.progress-btn:hover {
-    background-color: #b71c1c;
+.objective-tooltip-content {
+    max-height: 250px;
+    overflow-y: auto;
 }
 
-/* 物品界面样式 */
+.objective-tooltip-item {
+    margin-bottom: 4px;
+}
+
+.objective-tooltip-item:last-child {
+    margin-bottom: 0;
+}
+
+/* ===== 物品界面样式 ===== */
 .items-container {
     padding: 20px;
     display: flex;
@@ -457,83 +559,19 @@ body {
     color: var(--text-color);
 }
 
-/* 底部Dock栏样式 */
-.bottom-dock {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--dock-bg);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
-    padding: 10px 20px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    max-width: 95%;
-    overflow-x: auto;
-}
-
-.dock-container {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.dock-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s;
-    min-width: 80px;
-    position: relative;
-}
-
-.dock-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    transform: translateY(-5px);
-}
-
-.dock-item.active {
-    background-color: rgba(76, 175, 80, 0.2);
-}
-
-.dock-icon {
-    width: 60px;
-    height: 60px;
-    border-radius: 3px;
-    overflow: hidden;
-    margin-bottom: 5px;
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
-}
-
-.dock-icon img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.dock-name {
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-}
-
-/* 商人提示框样式 */
+/* ===== 工具提示样式 ===== */
 .trader-tooltip {
     position: absolute;
     background-color: var(--content-bg);
     padding: 10px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     z-index: 1001;
     max-width: 300px;
     display: none;
 }
 
-/* Leaflet地图样式调整 */
+/* ===== Leaflet地图样式调整 ===== */
 .leaflet-container {
     background-color: var(--bg-color);
 }
@@ -557,65 +595,7 @@ body {
     background-color: var(--content-bg);
 }
 
-/* 响应式设计 - 导航栏 & Dock栏 */
-@media (max-width: 768px) {
-    .top-navbar,
-	.bottom-dock {
-        padding: 8px 15px;
-        border-radius: 5px;
-    }
-    
-    .nav-item,
-	.dock-item
-	{
-        min-width: 70px;
-        padding: 8px;
-    }
-    
-    .nav-icon{
-        width: 35px;
-        height: 35px;
-    }
-	
-	.dock-icon{
-        width: 40px;
-        height: 40px;
-    }
-    
-    .nav-icon svg {
-        width: 20px;
-        height: 20px;
-    }
-    
-    .nav-name,
-	.dock-name
-	{
-        font-size: 11px;
-    }
-	
-	.floating-controls{
-		top: 110px;
-		right: 0px;
-	}
-}
-/* 多分支连线样式 */
-.links line.branch {
-    stroke: #FF9800;
-    stroke-width: 2;
-    stroke-dasharray: 5,5;
-}
-
-.links line.main {
-    stroke: #4CAF50;
-    stroke-width: 3;
-}
-
-.links line.default {
-    stroke: #666;
-    stroke-width: 3;
-}
-
-/* Dock栏滚动条样式 */
+/* ===== 滚动条样式 ===== */
 .bottom-dock::-webkit-scrollbar {
     height: 3px;
 }
@@ -634,7 +614,46 @@ body {
     background: rgba(255, 255, 255, 0.5);
 }
 
-/* 调整底部dock位置 */
-.bottom-dock {
-    bottom: 10px;
+/* ===== 连线样式 ===== */
+.links line.branch {
+    stroke: #FF9800;
+    stroke-width: 2;
+    stroke-dasharray: 5,5;
+}
+
+.links line.main {
+    stroke: #4CAF50;
+    stroke-width: 3;
+}
+
+.links line.default {
+    stroke: #666;
+    stroke-width: 3;
+}
+
+/* ===== 任务类型标签样式 ===== */
+.task-type-label {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 8px;
+    font-weight: bold;
+    color: white;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.task-type-label.fairy {
+    fill: #ff69b4; /* 粉色背景 */
+}
+
+.task-type-label.safe {
+    fill: #1e90ff; /* 蓝色背景 */
+}
+
+/* ===== 隐藏Leaflet标志 ===== */
+.leaflet-control-attribution {
+    display: none !important;
 }
